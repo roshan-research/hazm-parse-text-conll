@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>هضم</title>
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+<style type="text/css">
+	body {
+		direction: rtl;
+	}
+	.controls {
+		margin-top: 5px;
+	}
+	.container {
+		max-width: 600px;
+	}
+</style>
+<div class="header">
+	<div class="container">
+		<h1>هضم</h1>
+		<p>برای پردازش زبان فارسی در پایتون</p>
+	</div>
+</div>
+<div class="container content">
+	<div id="query">
+		<h3>متن ورودی</h3>
+		<textarea class="form-control" style="min-height: 80px">در می‌زند و دوباره وارد ميشود . همه مي گویند قدمش پربرکت است .</textarea>
+		<div class="controls">
+			<button id="process" class="btn btn-primary">پردازش</button>
+		</div>
+	</div>
+	<div class="demo" id="parsed">
+		<h3>تجزیه نحوی</h3>
+		<textarea id="conll" class="form-control" style="min-height: 600px"></textarea>
+	</div>
+</div>
+
+<script type="text/javascript" src="jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+	var server = 'http://api.sobhe.ir:5000/api';
+
+	var normalize = function(data) {
+		$.post(server + '/normalize', data)
+			.done(function(normalized_text) {
+				tokenize({'normalized_text': normalized_text});
+			})
+	};
+	var tokenize = function(data) {
+		$.post(server + '/tokenize', data)
+			.done(function(tokenized_text) {
+				tag({'tokenized_text': tokenized_text});
+			});
+	};
+	var tag = function(data) {
+		$.post(server + '/tag', data)
+			.done(function(tagged_text) {
+				parse({'tagged_text': tagged_text});
+			});
+	};
+	var parse = function(data) {
+		$.post(server + '/parse', data)
+			.done(function(parsed_text) {
+				$('#conll').val($.parseJSON(parsed_text).join('\n\n'));
+			});
+	};
+
+	$('#process').click(function() {
+		normalize({'text': $('#query textarea').val()});
+	});
+
+</script>
+</body>
+</html>
