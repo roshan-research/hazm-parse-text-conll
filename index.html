@@ -33,11 +33,35 @@
 	</div>
 	<div class="demo" id="parsed">
 		<h3>تجزیه نحوی</h3>
-		<textarea id="conll" class="form-control" style="min-height: 600px"></textarea>
+		<textarea id="conll" class="form-control" style="min-height: 500px"></textarea>
+	</div>
+	<div class="demo" id="tree">
+		<h3>درخت نحوی</h3>
+		<textarea id="data" class="form-control" style="min-height: 300px">		
+1	همه	همه	PRO	PRO	_	2	SBJ	_	_
+2	می‌گویند	گفت#گو	V	V	_	0	ROOT	_	_
+3	قدمش	قدم	N	N	_	5	SBJ	_	_
+4	پربرکت	پربرکت	AJ	AJ	_	5	MOS	_	_
+5	است	#است	V	V	_	2	VCL	_	_
+6	.	.	PUNC	PUNC	_	2	PUNC	_	_
+		</textarea>
+		<div class="controls">
+			<button id="draw" class="btn btn-primary">نمایش</button>
+		</div>
+	</div>
+
+	<div class="tree" style="margin-bottom: 300px;">
+		<svg height="0"></svg>
 	</div>
 </div>
 
 <script type="text/javascript" src="jquery-3.3.1.min.js"></script>
+
+<link rel="stylesheet" href="http://www.sobhe.ir/dependency-parse-tree/tree.css">
+<script type="text/javascript" src="http://www.sobhe.ir/dependency-parse-tree/d3.js"></script>
+<script type="text/javascript" src="http://www.sobhe.ir/dependency-parse-tree/dependency-tree.js"></script>
+
+
 <script type="text/javascript">
 	var server = 'http://api.sobhe.ir:5000/api';
 
@@ -70,6 +94,10 @@
 		normalize({'text': $('#query textarea').val()});
 	});
 
+	d3.select('#draw').on('click', function() {
+		drawTree('.tree svg', d3.select('#data')[0][0].value, false);
+	});
+	d3.select('#draw').on('click')();
 </script>
 </body>
 </html>
