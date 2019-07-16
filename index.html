@@ -33,11 +33,16 @@
 	</div>
 	<div class="demo" id="parsed">
 		<h3>تجزیه نحوی</h3>
-		<textarea id="conll" class="form-control" style="min-height: 500px"></textarea>
-	</div>
-	<div class="demo" id="tree">
-		<h3>درخت نحوی</h3>
-		<textarea id="data" class="form-control" style="min-height: 300px">		
+		<textarea id="conll" class="form-control" style="min-height: 500px">
+1	در	در	N	N	_	2	NVE	_	_
+2	می‌زند	زد#زن	V	V	_	3	PREDEP	_	_
+3	و	و	CONJ	CONJ	_	6	VCONJ	_	_
+4	دوباره	دوباره	ADV	ADV	_	6	ADV	_	_
+5	وارد	وارد	N	N	_	6	NVE	_	_
+6	میشود	میشود	V	V	_	0	ROOT	_	_
+7	.	.	PUNC	PUNC	_	6	PUNC	_	_
+
+
 1	همه	همه	PRO	PRO	_	2	SBJ	_	_
 2	می‌گویند	گفت#گو	V	V	_	0	ROOT	_	_
 3	قدمش	قدم	N	N	_	5	SBJ	_	_
@@ -45,13 +50,12 @@
 5	است	#است	V	V	_	2	VCL	_	_
 6	.	.	PUNC	PUNC	_	2	PUNC	_	_
 		</textarea>
-		<div class="controls">
-			<button id="draw" class="btn btn-primary">نمایش</button>
-		</div>
 	</div>
-
-	<div class="tree" style="margin-bottom: 300px;">
-		<svg height="0"></svg>
+	<div class="controls">
+		<button id="draw" class="btn btn-primary">نمایش</button>
+	</div>
+	<div id="parsed" style="margin-bottom: 300px;">
+		<div></div>
 	</div>
 </div>
 
@@ -87,6 +91,7 @@
 		$.post(server + '/parse', data)
 			.done(function(parsed_text) {
 				$('#conll').val($.parseJSON(parsed_text).join('\n\n'));
+				d3.select('#draw').on('click')();
 			});
 	};
 
@@ -95,7 +100,14 @@
 	});
 
 	d3.select('#draw').on('click', function() {
-		drawTree('.tree svg', d3.select('#data')[0][0].value, false);
+		sentences = d3.select('#conll')[0][0].value.split('\n\n');
+		div = $('#parsed > div'); div.empty();
+		for (s in sentences) {
+			if (sentences[s].length) {
+				div.append('<div class="tree"><svg id="tree'+ s +'"></svg></div>');
+				drawTree('#tree'+ s, sentences[s].replace(/_/g,' '));
+			}
+		}
 	});
 	d3.select('#draw').on('click')();
 </script>
